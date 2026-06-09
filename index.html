@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 46 Practice Quiz 2</title>
+
+    <style>
+        /* --- CSS Variables & Themes --- */
+        :root {
+            --transition-speed: 0.3s;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Default Feedback Colors (Fallback for custom themes) */
+            --feedback-success-bg: #064e3b;
+            --feedback-success-border: #059669;
+            --feedback-success-text: #a7f3d0;
+            --feedback-error-bg: #7f1d1d;
+            --feedback-error-border: #dc2626;
+            --feedback-error-text: #fecaca;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1e293b; --bg-card: #334155; --bg-header: #0f172a;
+            --text-main: #f1f5f9; --text-muted: #94a3b8; --text-accent: #38bdf8;
+            --border-color: #475569; --highlight-bg: #475569;
+            --button-bg: #38bdf8; --button-text: #0f172a; --button-hover: #0ea5e9;
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f3f4f6; --bg-card: #ffffff; --bg-header: #ffffff;
+            --text-main: #1f2937; --text-muted: #6b7280; --text-accent: #2563eb;
+            --border-color: #e5e7eb; --highlight-bg: #f3f4f6;
+            --button-bg: #2563eb; --button-text: #ffffff; --button-hover: #1d4ed8;
+            --feedback-success-bg: #ecfdf5; --feedback-success-border: #34d399; --feedback-success-text: #065f46;
+            --feedback-error-bg: #fef2f2; --feedback-error-border: #f87171; --feedback-error-text: #991b1b;
+        }
+
+        [data-theme="midnight"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #e0e0e0; --text-muted: #888888; --text-accent: #90caf9;
+            --border-color: #333333; --highlight-bg: #1a1a1a;
+            --button-bg: #90caf9; --button-text: #000000; --button-hover: #42a5f5;
+            --feedback-success-bg: #051b11; --feedback-success-border: #0f5132; --feedback-success-text: #75b798;
+            --feedback-error-bg: #2c0b0e; --feedback-error-border: #842029; --feedback-error-text: #ea868f;
+        }
+
+        [data-theme="legacy-dark"] {
+            --bg-body: #2d343e; --bg-card: #3c424f; --bg-header: #3c424f;
+            --text-main: #e8e6e3; --text-muted: #b0c4de; --text-accent: #8ab4f8;
+            --border-color: #555; --highlight-bg: #454c5a;
+            --button-bg: #8ab4f8; --button-text: #202124; --button-hover: #a3c5f9;
+            --feedback-success-bg: #344e41; --feedback-success-border: #52b788; --feedback-success-text: #c7f9cc;
+            --feedback-error-bg: #5e2129; --feedback-error-border: #a4133c; --feedback-error-text: #f8d7da;
+        }
+
+        [data-theme="sepia"] {
+            --bg-body: #f4ecd8; --bg-card: #fdf6e3; --bg-header: #e4d5b7;
+            --text-main: #433422; --text-muted: #7c6f5a; --text-accent: #a05a2c;
+            --border-color: #d3c4a5; --highlight-bg: #ebe1c9;
+            --button-bg: #a05a2c; --button-text: #fdf6e3; --button-hover: #864822;
+            --feedback-success-bg: #e6f4ea; --feedback-success-border: #8ab893; --feedback-success-text: #2e4c35;
+            --feedback-error-bg: #f9e3e3; --feedback-error-border: #d48f8f; --feedback-error-text: #5c2b2b;
+        }
+
+        [data-theme="contrast"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #ffffff; --text-muted: #dddddd; --text-accent: #ffff00;
+            --border-color: #ffffff; --highlight-bg: #333333;
+            --button-bg: #ffff00; --button-text: #000000; --button-hover: #e6e600;
+            --feedback-success-bg: #000000; --feedback-success-border: #00ff00; --feedback-success-text: #00ff00;
+            --feedback-error-bg: #000000; --feedback-error-border: #ff0000; --feedback-error-text: #ff0000;
+        }
+
+        /* --- Global Reset & Layout --- */
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-main);
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            line-height: 1.6;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        header.unpinned { position: relative; box-shadow: none; }
+
+        .header-top {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; flex-wrap: wrap; gap: 15px;
+        }
+
+        header h1 { font-size: 1.5rem; margin: 0; color: var(--text-accent); font-weight: 700; }
+
+        .controls-wrapper { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+        /* --- Custom Theme Builder --- */
+        .custom-builder {
+            display: none; flex-wrap: wrap; gap: 15px;
+            background-color: var(--bg-card); padding: 10px 15px;
+            border-radius: 8px; border: 1px solid var(--border-color);
+            margin-top: 5px; font-size: 0.85rem; animation: fadeIn 0.3s;
+            width: 100%; justify-content: flex-end;
+        }
+        .custom-builder.active { display: flex; }
+        .color-picker-group { display: flex; align-items: center; gap: 8px; }
+        .color-picker-group input[type="color"] {
+            border: none; width: 25px; height: 25px; border-radius: 4px;
+            cursor: pointer; padding: 0; background: none;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Controls --- */
+        .header-btn {
+            background-color: var(--highlight-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-btn:hover {
+            border-color: var(--text-accent);
+            color: var(--text-accent);
+        }
+
+        .pin-btn {
+            background: none; border: 1px solid var(--border-color); color: var(--text-main);
+            cursor: pointer; padding: 0 10px; border-radius: 6px; font-size: 1rem;
+            transition: background-color 0.2s; height: 34px; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .pin-btn:hover { background-color: var(--highlight-bg); }
+        .pin-btn.pin-active { background-color: rgba(0, 0, 0, 0.1); }
+
+        select#theme-select {
+            padding: 0 12px; border-radius: 6px; border: 1px solid var(--border-color);
+            background-color: var(--bg-card); color: var(--text-main);
+            cursor: pointer; font-family: inherit; height: 34px;
+        }
+
+        /* --- Section Navigation --- */
+        .section-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+        .section-nav button {
+            background-color: var(--highlight-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+            font-weight: 500; transition: all 0.2s;
+        }
+        .section-nav button:hover { border-color: var(--text-accent); color: var(--text-accent); }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 850px;
+            margin: 2rem auto;
+            padding: 0 1rem 4rem 1rem;
+        }
+
+        .section-header {
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--text-accent);
+            color: var(--text-accent);
+            font-size: 1.5rem;
+            font-weight: 700;
+            scroll-margin-top: 150px; /* Offset for sticky header */
+        }
+
+        /* --- Question Card --- */
+        .question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .lo-box {
+            background-color: var(--highlight-bg);
+            border-left: 4px solid var(--text-accent);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            display: none; /* Hidden by default */
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Options --- */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: var(--highlight-bg);
+            border-color: var(--text-muted);
+        }
+
+        .option-label input {
+            margin-top: 0.3rem;
+            margin-right: 1rem;
+            accent-color: var(--text-accent);
+            transform: scale(1.2);
+        }
+
+        /* --- Buttons --- */
+        .btn-check {
+            margin-top: 1.5rem;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-check:hover {
+            opacity: 0.9;
+        }
+
+        .btn-link {
+            display: inline-block;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-link:hover {
+            opacity: 0.9;
+        }
+
+        /* --- Feedback Area --- */
+        .feedback {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+            border: 1px solid transparent;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-success-bg);
+            border-color: var(--feedback-success-border);
+            color: var(--feedback-success-text);
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-error-bg);
+            border-color: var(--feedback-error-border);
+            color: var(--feedback-error-text);
+        }
+
+        .feedback-header {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .rationale {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .source {
+            display: block;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-style: italic;
+            border-top: 1px dashed currentColor;
+            padding-top: 0.5rem;
+        }
+
+        /* --- Mobile Tweaks --- */
+        @media (max-width: 768px) {
+            .header-top { flex-direction: column; align-items: flex-start; }
+            .controls-wrapper { width: 100%; justify-content: flex-start; }
+            .section-nav { justify-content: flex-start; }
+            .custom-builder { justify-content: flex-start; }
+            header h1 { font-size: 1.25rem; }
+            #reveal-all-container { justify-content: flex-start !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <div class="header-top">
+            <h1>Week 46 Practice Quiz 2</h1>
+            <div class="controls-wrapper">
+                
+                <!-- Reveal LOs Button -->
+                <button id="reveal-all-btn" class="header-btn" onclick="toggleAllLOs()">Show Learning Objectives</button>
+                
+                <!-- Pin Button -->
+                <button class="pin-btn pin-active" id="pin-btn" onclick="toggleHeader()" title="Pin/Unpin Header">📌</button>
+                
+                <!-- Theme Selector -->
+                <div class="theme-control">
+                    <select id="theme-select" onchange="changeTheme(this.value)">
+                        <option value="dark">Modern Dark</option>
+                        <option value="midnight">Midnight</option>
+                        <option value="light">Modern Light</option>
+                        <option value="legacy-dark">Legacy Dark</option>
+                        <option value="sepia">Sepia</option>
+                        <option value="contrast">High Contrast</option>
+                        <option value="custom">⚙️ Custom...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Custom Theme Color Pickers -->
+            <div class="custom-builder" id="custom-builder">
+                <div class="color-picker-group">
+                    <label>Background:</label>
+                    <input type="color" id="color-bg" value="#1a1a2e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Cards:</label>
+                    <input type="color" id="color-card" value="#16213e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Text:</label>
+                    <input type="color" id="color-text" value="#e94560" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Accent:</label>
+                    <input type="color" id="color-accent" value="#0f3460" oninput="updateCustomTheme()">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dynamic Navigation Bar -->
+        <div class="section-nav" id="section-nav"></div>
+    </header>
+
+    <div class="container">
+        
+        <div id="quiz-root">
+            <!-- Content injected via JS -->
+        </div>
+
+    </div>
+
+    <script>
+        // --- Data ---
+        const quizData = [
+            // --- Section 1: Parathyroid Disorders ---
+            {
+                section: "Parathyroid Disorders",
+                fullLO: "LO1: Recognize the normal physiological responses to hypercalcemia and hypocalcemia",
+                question: "A 45-year-old woman is found to have a low serum calcium level of 8.0 mg/dL on routine laboratory testing. To restore calcium homeostasis, her parathyroid glands secrete parathyroid hormone (PTH). Which of the following physiological responses will be directly stimulated by this hormone in her kidneys?",
+                options: {
+                    A: "Decreased tubular reabsorption of calcium",
+                    B: "Increased calcium excretion in the urine",
+                    C: "Increased synthesis of 1,25(OH)2 D",
+                    D: "Inhibition of bone osteoclastic resorption",
+                    E: "Reduced absorption of calcium in the intestines"
+                },
+                correctAnswer: "C",
+                rationale: "A decrease in serum calcium stimulates PTH release. In the kidney, PTH increases tubular reabsorption of calcium (decreasing its excretion in urine) and increases the synthesis of 1,25(OH)2 D (active Vitamin D), which subsequently increases the absorption of calcium in the gut.",
+                source: "Parathyroid Disorders PDF, slide 3: 'Feedback Loops: Hormonal Response to Decreased Serum Calcium Levels... [PTH release directly stimulates] Synthesis of 1,25(OH)2 D'"
+            },
+            {
+                section: "Parathyroid Disorders",
+                fullLO: "LO1: Recognize the normal physiological responses to hypercalcemia and hypocalcemia",
+                question: "A 50-year-old man presents with an elevated serum calcium level of 11.0 mg/dL. According to normal physiological feedback loops, this hypercalcemic state will suppress his parathyroid hormone (PTH) release. Which of the following physiological processes is directly stimulated as a compensatory response to these elevated serum calcium levels?",
+                options: {
+                    A: "Bone formation",
+                    B: "Calcium absorption in the intestines",
+                    C: "Calcium excretion in the feces",
+                    D: "Synthesis of 1,25(OH)2 D",
+                    E: "Tubular reabsorption of calcium"
+                },
+                correctAnswer: "A",
+                rationale: "In the normal physiological response to hypercalcemia (serum calcium > 10.5 mg/dL), PTH release is suppressed. The thyroid is stimulated (releasing calcitonin, though the diagram specifically highlights the process), which directly stimulates bone formation, thereby removing calcium from the serum to lower its levels.",
+                source: "Parathyroid Disorders PDF, slide 4: 'Feedback Loops: Hormonal Response to Increased Serum Calcium Levels... Serum calcium > 10.5 mg/dL -> Thyroid -> Bone formation'"
+            },
+            {
+                section: "Parathyroid Disorders",
+                fullLO: "LO2: Recognize the relationship between calcium and parathyroid hormone in primary hyperparathyroidism",
+                question: "A 55-year-old woman presents to the emergency department with severe right flank pain radiating to her groin. A CT scan confirms the presence of a kidney stone. Laboratory evaluation reveals an elevated serum calcium level. Her intact parathyroid hormone (PTH) level is reported as high-normal (elevated). Which of the following is the most likely interpretation of these laboratory findings?",
+                options: {
+                    A: "Hypoparathyroidism",
+                    B: "Non-parathyroid hypercalcemia",
+                    C: "Primary hyperparathyroidism",
+                    D: "Secondary hyperparathyroidism",
+                    E: "Vitamin D intoxication"
+                },
+                correctAnswer: "C",
+                rationale: "The diagnosis of primary hyperparathyroidism is characterized by an elevated serum calcium level paired with an elevated (or inappropriately normal) intact parathyroid hormone level.",
+                source: "Parathyroid Disorders PDF, slide 7: 'Relationship of Calcium and Intact Parathyroid Hormone... Calcium: elevated | Parathyroid Hormone: elevated | Interpretation: Primary Hyperparathyroidism'"
+            },
+            {
+                section: "Parathyroid Disorders",
+                fullLO: "LO2: Recognize the relationship between calcium and parathyroid hormone in primary hyperparathyroidism",
+                question: "A 62-year-old man undergoes routine laboratory testing, which reveals an elevated serum calcium level and an elevated intact parathyroid hormone (PTH) level. He is diagnosed with primary hyperparathyroidism. Which of the following is the most common underlying pathological etiology for this specific diagnosis?",
+                options: {
+                    A: "Adenoma",
+                    B: "Granulomatous disease",
+                    C: "Malignancy",
+                    D: "Multiple gland hyperplasia",
+                    E: "Thyrotoxicosis"
+                },
+                correctAnswer: "A",
+                rationale: "The two causes of primary hyperparathyroidism are adenoma and multiple gland hyperplasia. According to prevalence data, primary hyperparathyroidism represents 54% of hypercalcemia cases, and within primary disease, a single adenoma is the most frequent cause.",
+                source: "Parathyroid Disorders PDF, slides 10-11: 'Primary Hyperparathyroidism - Adenoma - Multiple Gland Hyperplasia'"
+            },
+            {
+                section: "Parathyroid Disorders",
+                fullLO: "LO3: Recognize the relationships between calcium, vitamin D and parathyroid hormone in secondary hyperparathyroidism",
+                question: "A 60-year-old man with end-stage kidney disease has his intact parathyroid hormone (PTH) and serum calcium levels measured during a dialysis visit. His PTH is significantly elevated, and his serum calcium is below normal limits. Which of the following best classifies this patient's endocrine abnormality?",
+                options: {
+                    A: "Familial hypocalciuric hypercalcemia",
+                    B: "Hypoparathyroidism",
+                    C: "Non-parathyroid hypercalcemia",
+                    D: "Primary hyperparathyroidism",
+                    E: "Secondary hyperparathyroidism"
+                },
+                correctAnswer: "E",
+                rationale: "Secondary hyperparathyroidism occurs when the parathyroid glands secrete excessive PTH in response to a chronic hypocalcemic state (low or normal calcium). End-stage kidney disease is a classic cause of this condition.",
+                source: "Parathyroid Disorders PDF, slide 7: 'Relationship of Calcium and Intact Parathyroid Hormone... Calcium: low | Parathyroid Hormone: elevated | Interpretation: Secondary Hyperparathyroidism'"
+            },
+            {
+                section: "Parathyroid Disorders",
+                fullLO: "LO3: Recognize the relationships between calcium, vitamin D and parathyroid hormone in secondary hyperparathyroidism",
+                question: "A 50-year-old woman is evaluated for osteoporosis. Her laboratory results show a normal serum calcium level accompanied by an elevated intact parathyroid hormone (PTH) level. She is diagnosed with secondary hyperparathyroidism. Which of the following is the most likely underlying nutritional or systemic cause of her condition?",
+                options: {
+                    A: "Calcium consumption excess",
+                    B: "Granuloma",
+                    C: "Malignancy",
+                    D: "Thyrotoxicosis",
+                    E: "Vitamin D deficiency"
+                },
+                correctAnswer: "E",
+                rationale: "Secondary hyperparathyroidism is caused by conditions that lead to chronic low calcium, prompting the parathyroid to increase PTH. The main causes include Vitamin D/Calcium deficiency, hypercalciuria, and end-stage kidney disease.",
+                source: "Parathyroid Disorders PDF, slide 15: 'Secondary Hyperparathyroidism: Vitamin D/Calcium Deficiency | Hypercalciuria | End stage kidney Disease'"
+            },
+            {
+                section: "Parathyroid Disorders",
+                fullLO: "LO4: Recognize treatment options for primary and secondary hyperparathyroidism",
+                question: "A 48-year-old man is diagnosed with primary hyperparathyroidism during a routine wellness exam. He is completely asymptomatic, his serum calcium is 1.5 mg/dL above the upper limit of normal, and he has no history of nephrolithiasis. His physician recommends surgical parathyroidectomy. Which of the following represents a specific, independent indication for surgery in this patient?",
+                options: {
+                    A: "Age <50 years",
+                    B: "Asymptomatic presentation",
+                    C: "Lack of radiologic vertebral fractures",
+                    D: "Male gender",
+                    E: "Normal creatinine clearance"
+                },
+                correctAnswer: "A",
+                rationale: "While the patient is asymptomatic, there are several strict indications for surgery in primary hyperparathyroidism. These include a serum calcium >1 mg/dL above normal, creatinine clearance <60 ml/min, T score <-2.5, radiologic evidence of vertebral fracture, and being under 50 years of age (Age <50).",
+                source: "Parathyroid Disorders PDF, slide 13: 'Indications for Surgery | Any of the following: ... Age <50 years'"
+            },
+            {
+                section: "Parathyroid Disorders",
+                fullLO: "LO4: Recognize treatment options for primary and secondary hyperparathyroidism",
+                question: "A 72-year-old woman is diagnosed with primary hyperparathyroidism but has no direct surgical indications and refuses operative intervention. Her physician decides to manage her condition medically. Which of the following pharmacological agents is most appropriate to prescribe to protect against bone loss in this patient?",
+                options: {
+                    A: "Bisphosphonates",
+                    B: "Calcium carbonate",
+                    C: "Cholecalciferol",
+                    D: "Ergocalciferol",
+                    E: "Thiazide diuretics"
+                },
+                correctAnswer: "A",
+                rationale: "For patients with primary hyperparathyroidism who have no indication for surgery, medical management includes ambulation, adequate hydration, calcimimetics, avoiding thiazide diuretics, and using bisphosphonates to protect against bone loss.",
+                source: "Parathyroid Disorders PDF, slide 14: 'PRIMARY HYPERPARATHYROIDISM | NO INDICATION FOR SURGERY... Bisphosphonates may protect against bone loss'"
+            },
+
+            // --- Section 2: Thyroid and Parathyroid Drugs ---
+            {
+                section: "Thyroid and Parathyroid Drugs",
+                fullLO: "LO1: Recognize the pharmacological effects of thyroid hormones and the antithyroid drugs.",
+                question: "A 28-year-old pregnant woman is diagnosed with severe hyperthyroidism during her first trimester. The physician considers starting a thionamide to inhibit thyroid hormone synthesis. Which of the following medications is strictly contraindicated for this patient during her first trimester due to the risk of fetal harm?",
+                options: {
+                    A: "Levothyroxine",
+                    B: "Liothyronine",
+                    C: "Methimazole",
+                    D: "Propylthiouracil (PTU)",
+                    E: "Propranolol"
+                },
+                correctAnswer: "C",
+                rationale: "Methimazole is a potent synthesis inhibitor (10-50x more potent than PTU). However, it readily crosses the placental barrier and is strictly contraindicated in the first trimester of pregnancy. PTU is typically preferred during this specific period.",
+                source: "Thyroid and Parathyroid Drugs PDF, slide 13: 'Methimazole crosses the placental barrier - contraindicated in first trimester of pregnancy'"
+            },
+            {
+                section: "Thyroid and Parathyroid Drugs",
+                fullLO: "LO1: Recognize the pharmacological effects of thyroid hormones and the antithyroid drugs.",
+                question: "A 45-year-old woman with a large toxic multinodular goiter is preparing for a surgical thyroidectomy. To reduce the vascularity of the thyroid gland and decrease the size of the follicular cells prior to the procedure, the surgeon prescribes a specific agent. This agent acts via the Wolff-Chaikoff effect to inhibit the synthesis of iodotyrosine. Which of the following agents was most likely prescribed?",
+                options: {
+                    A: "Iodide",
+                    B: "Liotrox",
+                    C: "Methimazole",
+                    D: "Radioactive Iodine",
+                    E: "Thiocyanate"
+                },
+                correctAnswer: "A",
+                rationale: "Iodide is the oldest remedy for thyroid disorders. High concentrations inhibit the synthesis of iodotyrosines (Wolff-Chaikoff effect) and inhibit the release of thyroid hormone. Clinically, it reduces thyroid gland vascularity and decreases cell size, making it highly useful for pre-surgical preparation.",
+                source: "Thyroid and Parathyroid Drugs PDF, slide 15: 'Iodide • Inhibits synthesis of iodotyrosine and iodothyronines (Wolff-Chaikoff Effect) • High concentrations inhibit release of thyroid hormone... • Thyroid gland vascularity is reduced and cells decrease in size'"
+            },
+            {
+                section: "Thyroid and Parathyroid Drugs",
+                fullLO: "LO1: Recognize the pharmacological effects of thyroid hormones and the antithyroid drugs.",
+                question: "A 35-year-old man with Graves' disease presents with severe tachycardia, palpitations, and tremors. He also has a history of type 1 diabetes mellitus. The physician considers prescribing propranolol to manage his cardiovascular symptoms. The physician must monitor this patient closely because propranolol can induce which of the following adverse metabolic effects?",
+                options: {
+                    A: "Hypercalcemia",
+                    B: "Hyperthyroidism",
+                    C: "Hypocalcemia",
+                    D: "Hypoglycemia",
+                    E: "Osteomalacia"
+                },
+                correctAnswer: "D",
+                rationale: "Propranolol is a non-selective beta-adrenergic antagonist used to treat the cardiovascular effects of hyperthyroidism. However, because it blocks both beta-1 and beta-2 adrenoceptors, it can induce hypoglycemia, which is a major concern in diabetic patients.",
+                source: "Thyroid and Parathyroid Drugs PDF, slide 17: 'Beta Adrenergic Antagonists | PROPRANOLOL... Induce hypoglycemia – concern in diabetics • Hyperthyroidism – treat cardiovascular effects'"
+            },
+            {
+                section: "Thyroid and Parathyroid Drugs",
+                fullLO: "LO1: Recognize the pharmacological effects of thyroid hormones and the antithyroid drugs.",
+                question: "A researcher is developing a novel drug for hyperthyroidism that functions specifically as an ionic inhibitor. The drug is a monovalent hydrated ion that physically mimics the size of iodine. This agent reduces thyroid hormone synthesis primarily by disrupting which of the following physiological processes?",
+                options: {
+                    A: "Destruction of the gland via ionizing radiation",
+                    B: "Incorporation of iodine into tyrosyl residues",
+                    C: "Release of preformed thyroid hormone from colloid",
+                    D: "Transport of iodide into the thyroid gland",
+                    E: "Wolff-Chaikoff effect induction"
+                },
+                correctAnswer: "D",
+                rationale: "Ionic inhibitors (such as thiocyanate and perchlorate) are monovalent hydrated ions similar in size to iodine. They work specifically by interfering with and blocking the active transport mechanism of iodide into the thyroid gland.",
+                source: "Thyroid and Parathyroid Drugs PDF, slide 14: 'Ionic Inhibitors • Interfere with transport of iodide into the thyroid gland • Monovalent hydrated ions (SCN- , ClO4 - ) similar in size to iodine'"
+            },
+            {
+                section: "Thyroid and Parathyroid Drugs",
+                fullLO: "LO2: Describe the pharmacological effects of PTH and calcitonin.",
+                question: "A 55-year-old woman with severe osteoporosis is given a recombinant formulation of parathyroid hormone (PTH) to stimulate bone remodeling. In addition to its effects on bone, PTH directly affects the kidneys to modulate electrolyte balance. Which of the following is a direct pharmacological effect of PTH on the renal tubules?",
+                options: {
+                    A: "Decreases kidney efficiency of calcium resorption",
+                    B: "Decreases serum calcium concentration",
+                    C: "Elicits renal conversion of calcitriol to inactive vitamin D",
+                    D: "Inhibits tubular reabsorption of phosphate",
+                    E: "Suppresses osteoclast function"
+                },
+                correctAnswer: "D",
+                rationale: "PTH acts on the kidney to increase the efficiency of calcium resorption, elicit the renal conversion of vitamin D to its active hormonal form (calcitriol), and importantly, cause the kidney to inhibit the tubular reabsorption of phosphate (leading to phosphate excretion).",
+                source: "Thyroid and Parathyroid Drugs PDF, slide 22: 'PTH - Effects on Kidney... Causes kidney inhibition of tubular reabsorption of phosphate'"
+            },
+            {
+                section: "Thyroid and Parathyroid Drugs",
+                fullLO: "LO2: Describe the pharmacological effects of PTH and calcitonin.",
+                question: "A 60-year-old man is hospitalized with severe hypercalcemia of malignancy. He is treated with a specific hormone derived from the follicular \"C\" cells of the thyroid gland. This hormone works strictly to oppose the actions of PTH on bone and serum electrolytes. Which of the following medications was most likely administered?",
+                options: {
+                    A: "Calcitonin",
+                    B: "Calcitriol",
+                    C: "Cholecalciferol",
+                    D: "Etidronate",
+                    E: "Pamidronate"
+                },
+                correctAnswer: "A",
+                rationale: "Calcitonin is a hypocalcemic hormone produced by the follicular C cells of the thyroid. It opposes the actions of PTH by exerting hypocalcemic and hypophosphatemic effects via the inhibition of osteoclastic bone resorption.",
+                source: "Thyroid and Parathyroid Drugs PDF, slide 27: 'Calcitonin... Hypocalcemic hormone which opposes actions of PTH • Produced from follicular cells of the thyroid'"
+            },
+            {
+                section: "Thyroid and Parathyroid Drugs",
+                fullLO: "LO3: Discuss the pharmacological effects of vitamin D.",
+                question: "A 65-year-old woman with chronic renal failure develops osteomalacia due to an inability to perform the final enzymatic step in Vitamin D activation. She requires pharmacological supplementation with the primary active metabolite of vitamin D. Which of the following specific compounds must be administered to bypass her renal defect?",
+                options: {
+                    A: "Calcifediol",
+                    B: "Calcitonin",
+                    C: "Calcitriol (1,25 dihydroxyvitamin D)",
+                    D: "Cholecalciferol",
+                    E: "Provitamin (7-dehydrocholesterol)"
+                },
+                correctAnswer: "C",
+                rationale: "The primary active metabolite of vitamin D is calcitriol (1,25 dihydroxyvitamin D), which is normally formed by the conversion of calcifediol in the kidney. In a patient with renal failure, this final step is impaired, so the active form (calcitriol) must be given.",
+                source: "Thyroid and Parathyroid Drugs PDF, slide 23: 'Calcifediol is converted to calcitriol (1,25 dihydroxyvitamin D) in the kidney • Primary active metabolite of vitamin D is calcitriol (1,25 dihydroxyvitamin D)'"
+            },
+            {
+                section: "Thyroid and Parathyroid Drugs",
+                fullLO: "LO3: Discuss the pharmacological effects of vitamin D.",
+                question: "A 10-year-old child presents with bowing of the legs and failure to mineralize new bone due to inadequate exposure to sunlight and a deficient diet. He is diagnosed with nutritional rickets. Treatment with active Vitamin D (calcitriol) is initiated. Which of the following physiological mechanisms represents the primary pathway by which calcitriol will elevate his plasma calcium?",
+                options: {
+                    A: "Decreasing bone resorption",
+                    B: "Directly inhibiting osteoclast function",
+                    C: "Enhancing gut calcium absorption",
+                    D: "Promoting renal phosphate excretion",
+                    E: "Slowing the formation of hydroxyapatite crystals"
+                },
+                correctAnswer: "C",
+                rationale: "Calcitriol (the hormonal form of vitamin D) is secreted into the circulation and binds to intestinal receptors. Its primary pharmacological effect in regulating calcium is to increase plasma Ca2+ by heavily enhancing gut calcium absorption.",
+                source: "Thyroid and Parathyroid Drugs PDF, slide 20: 'Parathyroid Hormone (PTH) • Stimulate conversion of vitamin D to its hormonal form (calcitriol) • Calcitriol is secreted into the circulation - binds to intestinal receptors • Increases plasma Ca2+ by enhancing gut calcium absorption'"
+            },
+
+            // --- Section 3: Thyroid Pathology ---
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO1: Compare and contrast hyperthyroidism and hypothyroidism regarding etiology, pathogenesis, morphologic features, and basic clinical features.",
+                question: "A 32-year-old woman presents with heat intolerance, excessive perspiration, and a recent unintended weight loss despite a notably increased appetite. Physical examination reveals an enlarged thyroid gland, a staring gaze with lid lag, and a fine resting tremor. Laboratory studies show a severely decreased TSH level. Which of the following additional clinical findings is most characteristic of this patient's disease state?",
+                options: {
+                    A: "Bradycardia",
+                    B: "Cold sensitivity",
+                    C: "Constipation",
+                    D: "Mental sluggishness",
+                    E: "Tachycardia"
+                },
+                correctAnswer: "E",
+                rationale: "The patient has a hypermetabolic state (hyperthyroidism/thyrotoxicosis), most likely Graves disease based on the staring gaze and lid lag. Clinical features of hyperthyroidism include tachycardia, palpitations, tremor, weight loss despite increased appetite, and heat intolerance. Bradycardia, cold sensitivity, constipation, and mental sluggishness are features of hypothyroidism.",
+                source: "Thyroid Pathology PDF, slide 16: 'Hyperthyroidism - Clinical Features... Signs & Symptoms... Cardiac • Tachycardia'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO1: Compare and contrast hyperthyroidism and hypothyroidism regarding etiology, pathogenesis, morphologic features, and basic clinical features.",
+                question: "A 58-year-old woman presents to her physician complaining of severe fatigue, unexplained weight gain, and new-onset constipation. Her husband notes that she frequently feels cold, even in the summer, and her voice has become hoarse. Laboratory evaluation reveals an elevated TSH and a decreased free T4. Which of the following cardiovascular findings is a direct hallmark of this patient's diagnosis?",
+                options: {
+                    A: "Atrial fibrillation",
+                    B: "Bradycardia",
+                    C: "High output failure",
+                    D: "Palpitations",
+                    E: "Tachycardia"
+                },
+                correctAnswer: "B",
+                rationale: "The patient exhibits classic clinical signs of a hypometabolic state (hypothyroidism), confirmed by high TSH and low T4. Characteristic features include fatigue, weight gain, cold sensitivity, constipation, and bradycardia.",
+                source: "Thyroid Pathology PDF, slide 19: 'Hypothyroidism - Clinical Features - ... Signs & Symptoms ... Cardiovascular • Bradycardia'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO1: Compare and contrast hyperthyroidism and hypothyroidism regarding etiology, pathogenesis, morphologic features, and basic clinical features.",
+                question: "A 30-year-old woman complains of heat intolerance, frequent loose stools, and heart palpitations. She has a staring gaze and her thyroid gland is diffusely enlarged. The pathogenesis of this patient's hyperthyroid state is primarily mediated by which of the following mechanisms?",
+                options: {
+                    A: "Autoantibodies stimulating the TSH receptor",
+                    B: "Destruction of the thyroid gland by cytotoxic T cells",
+                    C: "Iodine deficiency leading to compensatory hypertrophy",
+                    D: "Mutations in the RET proto-oncogene",
+                    E: "Secretion of exogenous thyroid hormone from an ovarian teratoma"
+                },
+                correctAnswer: "A",
+                rationale: "The patient has Graves disease (Diffuse Toxic Goiter), an autoimmune disorder. Its basic pathogenic mechanism involves IgG antibodies (Thyroid Stimulating Immunoglobulin or TSI) that bind to and chronically activate the TSH receptor on thyroid follicular cells, leading to excessive hormone production.",
+                source: "Thyroid Pathology PDF, slides 10-11: 'Graves Disease / Diffuse Toxic Goiter - An Autoimmune Disease - Ig binds to TSH receptor on follicular cell... Thyroid Stimulating Immunoglobulin (TSI)' and 'Basic Pathogenic Mechanism(s)... Autoimmune disorder with antibodies to TSH receptor' (Thyroid Pathology PDF, slide 21)"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO1: Compare and contrast hyperthyroidism and hypothyroidism regarding etiology, pathogenesis, morphologic features, and basic clinical features.",
+                question: "A 35-year-old woman undergoes a near-total thyroidectomy for severe, medically refractory Graves disease. Histological examination of her excised thyroid gland is most likely to reveal which of the following morphologic features?",
+                options: {
+                    A: "Atrophy of follicular cells with extensive fibrosis",
+                    B: "Colloid resorption and follicular cell hyperplasia",
+                    C: "Granulomatous inflammation with multinucleated giant cells",
+                    D: "Nodules of variably sized follicles with abundant colloid",
+                    E: "Widespread amyloid deposition in the stroma"
+                },
+                correctAnswer: "B",
+                rationale: "The pathology of Graves disease (diffuse toxic goiter) is characterized by diffuse thyroid enlargement, marked follicular cell hyperplasia (tall, crowded cells), colloid resorption (resulting in \"scalloped\" edges of the colloid), increased vascularity, and lymphoplasmacytic infiltrates.",
+                source: "Thyroid Pathology PDF, slide 13: 'Graves Disease / Diffuse Toxic Goiter - Pathology - • Diffuse thyroid enlargement • Follicular cell hyperplasia • Colloid resorption • Lymphoplasmacytic infiltrates'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO1: Compare and contrast hyperthyroidism and hypothyroidism regarding etiology, pathogenesis, morphologic features, and basic clinical features.",
+                question: "A medical mission team is evaluating a population in a remote, mountainous region where dietary resources are extremely limited. They note a high prevalence of patients presenting with fatigue, cold intolerance, mental sluggishness, and goiter. Worldwide, what is the most common underlying cause for this specific hypometabolic state?",
+                options: {
+                    A: "Autoimmune destruction of the thyroid gland",
+                    B: "Congenital biosynthetic defects",
+                    C: "Dietary iodine deficiency",
+                    D: "Pituitary adenoma",
+                    E: "Post-surgical thyroid ablation"
+                },
+                correctAnswer: "C",
+                rationale: "The population exhibits signs of hypothyroidism (fatigue, cold intolerance, mental sluggishness). While Hashimoto's is a common cause in developed nations with adequate iodine, worldwide, dietary iodine deficiency accounts for the vast majority of hypothyroidism cases.",
+                source: "Thyroid Pathology PDF, slide 18: 'Hypothyroidism... Causes • Iodine deficiency [Bracket pointing to text:] Account for most cases worldwide'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO2: Describe chronic lymphocytic (Hashimoto) thyroiditis regarding pathogenesis, morphologic features, and basic clinical features.",
+                question: "A 45-year-old woman is diagnosed with chronic lymphocytic (Hashimoto) thyroiditis after presenting with an enlarged, painless goiter and an elevated TSH. She is informed that her condition is an autoimmune disease with an underlying genetic susceptibility. Which of the following genetic risk factors is most strongly associated with her condition?",
+                options: {
+                    A: "BRAF point mutation",
+                    B: "HLA-DR5 haplotype",
+                    C: "PAX8/PPARG gene fusion",
+                    D: "RET proto-oncogene mutation",
+                    E: "TERT promoter mutation"
+                },
+                correctAnswer: "B",
+                rationale: "Hashimoto's thyroiditis is the most clinically significant form of thyroiditis. It is an autoimmune disease associated with specific genetic risk factors, predominantly the HLA-DR5 haplotype and polymorphisms in the CTLA4 gene.",
+                source: "Thyroid Pathology PDF, slide 24: 'Chronic Lymphocytic Thyroiditis (Hashimoto or Autoimmune Thyroiditis)... Genetic risk factors • HLA-DR5 haplotype • Polymorphisms in CTLA4'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO2: Describe chronic lymphocytic (Hashimoto) thyroiditis regarding pathogenesis, morphologic features, and basic clinical features.",
+                question: "A 50-year-old woman with a history of progressive hypothyroidism undergoes a fine needle aspiration of her thyroid gland. Histological evaluation of the parenchyma reveals extensive follicular cell atrophy and prominent oncocytic (Hürthle cell) metaplasia. Which of the following additional microscopic findings is most characteristic of this patient's underlying thyroid disease?",
+                options: {
+                    A: "Amyloid stroma",
+                    B: "Diffuse sheets of undifferentiated spindle cells",
+                    C: "Lymphoplasmacytic infiltrates with germinal centers",
+                    D: "Orphan Annie nuclei and pseudoinclusions",
+                    E: "Solid trabecular growth pattern"
+                },
+                correctAnswer: "C",
+                rationale: "The microscopic pathology of Hashimoto (chronic lymphocytic) thyroiditis is classically defined by the presence of dense lymphoplasmacytic infiltrates, prominent germinal centers, follicular cell atrophy, and oncocytic (Hürthle cell) metaplasia.",
+                source: "Thyroid Pathology PDF, slide 28: 'Chronic Lymphocytic Thyroiditis - Pathology - • Lymphoplasmacytic infiltrates • Germinal centers • Follicular cell atrophy and loss • Oncocytic (Hürthle cell) metaplasia of follicular cells'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO3: Describe thyroid follicular nodular disease (multinodular goiter) regarding etiology, pathogenesis, morphologic features, and basic clinical features.",
+                question: "A 62-year-old woman from a mountainous region with endemic iodine deficiency presents with a massively enlarged, irregular thyroid gland. She is diagnosed with a multinodular goiter (thyroid follicular nodular disease). The initial pathogenesis of this massive glandular enlargement is primarily driven by an inadequate production of thyroid hormone, which directly leads to a compensatory increase in which of the following?",
+                options: {
+                    A: "Antithyroid peroxidase antibodies",
+                    B: "Calcitonin",
+                    C: "Thyroid Stimulating Hormone (TSH)",
+                    D: "Thyroid Stimulating Immunoglobulin (TSI)",
+                    E: "Thyroxine (T4)"
+                },
+                correctAnswer: "C",
+                rationale: "The etiology of follicular nodular disease typically begins with inadequate thyroid hormone production (such as from iodine deficiency). The drop in thyroid hormone removes negative feedback, causing a compensatory rise in pituitary TSH. This elevated TSH continuously stimulates the growth and proliferation of follicular cells, producing a goiter.",
+                source: "Thyroid Pathology PDF, slide 47: 'Thyroid Follicular Nodular Disease - Etiology and Pathogenesis - • Inadequate thyroid hormone production • TSH rises and stimulates growth of follicular cells'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO3: Describe thyroid follicular nodular disease (multinodular goiter) regarding etiology, pathogenesis, morphologic features, and basic clinical features.",
+                question: "A 70-year-old man undergoes a subtotal thyroidectomy for a very large, compressive anterior neck mass. Gross pathology reveals an asymmetrically enlarged gland with multiple non-clonal nodules. Microscopic evaluation of the nodules demonstrates a highly variable architecture. Which of the following histological features is most characteristic of this specific benign disease process?",
+                options: {
+                    A: "Diffuse sheets of undifferentiated spindle cells",
+                    B: "Exclusively microfollicular solid growth without colloid",
+                    C: "Prominent psammoma bodies with nuclear grooves",
+                    D: "Variably sized follicles with scant to abundant colloid",
+                    E: "Widespread amyloid deposition"
+                },
+                correctAnswer: "D",
+                rationale: "Thyroid follicular nodular disease (multinodular goiter) is characterized histologically by a highly variable architecture consisting of variably sized follicles (from macrofollicular to microfollicular) containing a variable amount of colloid (scant to abundant), interspersed with fibrotic and hemorrhagic foci.",
+                source: "Thyroid Pathology PDF, slide 44: 'Thyroid Follicular Nodular Disease - Pathology - • Variably sized follicles • Variable colloid • Scant to abundant'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO3: Describe thyroid follicular nodular disease (multinodular goiter) regarding etiology, pathogenesis, morphologic features, and basic clinical features.",
+                question: "A 68-year-old woman has had a slowly enlarging anterior neck mass for over 15 years, diagnosed as a multinodular goiter (thyroid follicular nodular disease). While previously asymptomatic and strictly euthyroid, she now presents to the clinic with sudden weight loss, palpitations, and fine tremors. Laboratory tests confirm hyperthyroidism. The sudden development of hyperthyroidism in this patient is most likely due to which of the following pathogenic mechanisms within the established nodules?",
+                options: {
+                    A: "Activating mutations of the TSH receptor",
+                    B: "Autoimmune stimulation by thyroid-stimulating immunoglobulins",
+                    C: "High-grade transformation into an anaplastic carcinoma",
+                    D: "Ischemic necrosis and massive release of preformed hormone",
+                    E: "Malignant transformation into medullary thyroid carcinoma"
+                },
+                correctAnswer: "A",
+                rationale: "While most cases of thyroid follicular nodular disease are euthyroid, hyperthyroidism can eventually occur (creating a toxic multinodular goiter). If it occurs, it is usually due to the development of activating mutations of the TSH receptors within the nodules, causing autonomous growth and hormone production independent of pituitary TSH.",
+                source: "Thyroid Pathology PDF, slide 50: 'Thyroid Follicular Nodular Disease - Clinical Aspects - • Most cases euthyroid... • Hyperthyroidism may occur • If it occurs, probably due to activating mutations of TSH receptors'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO4: Compare and contrast follicular, papillary, and anaplastic thyroid carcinoma regarding morphologic features, most common driver mutations, prognosis, and usual route of metastasis.",
+                question: "A 40-year-old woman presents with a solitary thyroid nodule. She undergoes a fine-needle aspiration, followed by surgical excision. Pathology reveals an encapsulated tumor with capsular invasion, confirming follicular thyroid carcinoma. The oncologist counsels the patient regarding the risk of metastasis. Unlike papillary carcinoma, this specific tumor primarily metastasizes via which of the following routes?",
+                options: {
+                    A: "Direct extension into the trachea",
+                    B: "Hematogenous spread",
+                    C: "Lymphatic spread",
+                    D: "Perineural invasion",
+                    E: "Seeding of the peritoneal cavity"
+                },
+                correctAnswer: "B",
+                rationale: "A key distinguishing feature between the two main well-differentiated thyroid carcinomas is their route of metastasis. Papillary carcinoma usually metastasizes via the lymphatics to regional lymph nodes, whereas Follicular carcinoma classically spreads hematogenously (via blood vessels) to the lungs and bones.",
+                source: "Thyroid Pathology PDF, slide 72: 'Follicular vs. Papillary Carcinoma... Follicular... Hematogenous metastasis' AND 'Papillary... Usually lymphatic metastasis'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO4: Compare and contrast follicular, papillary, and anaplastic thyroid carcinoma regarding morphologic features, most common driver mutations, prognosis, and usual route of metastasis.",
+                question: "A 35-year-old woman undergoes a thyroidectomy for the most common type of thyroid malignancy. The pathology report notes that the tumor cells exhibit characteristic hypochromatic \"Orphan Annie\" nuclei. Which of the following additional nuclear features is most likely to be present, confirming the diagnosis of papillary thyroid carcinoma?",
+                options: {
+                    A: "Abundant granular basophilic cytoplasm (Hürthle cells)",
+                    B: "Amyloid deposition within the stroma",
+                    C: "Frequent, highly atypical mitoses",
+                    D: "Intranuclear pseudoinclusions and grooves",
+                    E: "Marked pleomorphism and giant cells"
+                },
+                correctAnswer: "D",
+                rationale: "The histological diagnosis of Papillary Thyroid Carcinoma is strictly based on its characteristic nuclear features, which override architectural features. These include nuclear enlargement, crowding/overlapping, hypochromatic/clear nuclei (\"Orphan Annie\"), irregularity of nuclear contours, nuclear grooves, and pseudoinclusions.",
+                source: "Thyroid Pathology PDF, slide 65: 'Papillary Thyroid Carcinoma - Characteristic Nuclear Features - ... • Grooves • Pseudoinclusions'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO4: Compare and contrast follicular, papillary, and anaplastic thyroid carcinoma regarding morphologic features, most common driver mutations, prognosis, and usual route of metastasis.",
+                question: "An 80-year-old man with a longstanding history of a multinodular goiter notices rapid enlargement of his neck mass over the past three weeks, accompanied by severe dysphagia and hoarseness. A biopsy reveals a highly aggressive neoplasm composed of spindle cells, pleomorphic giant cells, and frequent mitoses. What is his median expected survival?",
+                options: {
+                    A: "3 months",
+                    B: "1 year",
+                    C: "5 years",
+                    D: "10 years",
+                    E: ">20 years"
+                },
+                correctAnswer: "A",
+                rationale: "The patient has Anaplastic (undifferentiated) Thyroid Carcinoma, characterized by a highly aggressive nature, occurrence in older adults (often arising from a longstanding goiter), and undifferentiated cellular patterns (spindle, pleomorphic giant cells, squamoid). The prognosis is dismal, with a median survival of around 3 months.",
+                source: "Thyroid Pathology PDF, slide 76: 'Anaplastic Thyroid Carcinoma (Undifferentiated Carcinoma) • Highly aggressive malignant neoplasm • Usually affects older adults... • Medial survival usually around 3 months'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO4: Compare and contrast follicular, papillary, and anaplastic thyroid carcinoma regarding morphologic features, most common driver mutations, prognosis, and usual route of metastasis.",
+                question: "A 52-year-old woman undergoes excision of a 3-cm encapsulated follicular neoplasm in her right thyroid lobe. Cytological evaluation of the follicular cells alone via fine needle aspiration could not differentiate between a benign adenoma and a malignant carcinoma. Which of the following histological criteria is absolutely required on the surgical specimen to formally diagnose this lesion as a follicular thyroid carcinoma?",
+                options: {
+                    A: "The presence of dense colloid",
+                    B: "The presence of nuclear pseudoinclusions",
+                    C: "The presence of psammoma bodies",
+                    D: "Vascular invasion or invasion through the capsule",
+                    E: "Widespread lymphocytic infiltration"
+                },
+                correctAnswer: "D",
+                rationale: "Follicular adenomas and follicular carcinomas look identical on cellular cytology. The definitive diagnosis of a follicular carcinoma requires the identification of either vascular invasion (into capsular or extratumoral blood vessels) or direct invasion through the tumor capsule.",
+                source: "Thyroid Pathology PDF, slide 55: 'Follicular Neoplasms Adenoma vs. Carcinoma | Follicular Carcinoma Requires One of These Criteria: Vascular Invasion ... Invasion Through Capsule'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO5: Describe medullary thyroid carcinoma regarding cell of origin, morphologic features, most common driver mutation, and differences between familial and sporadic types.",
+                question: "A 45-year-old man undergoes a total thyroidectomy after a firm thyroid nodule is discovered. Pathologic examination reveals a neuroendocrine tumor composed of round, oval, and spindled cells. The extracellular stroma stains positively with Congo red, displaying an apple-green birefringence under polarized light. This neoplasm originates from which of the following specific cell types?",
+                options: {
+                    A: "C cells (parafollicular cells)",
+                    B: "Colloid cells",
+                    C: "Follicular epithelial cells",
+                    D: "Hürthle cells",
+                    E: "Lymphocytes"
+                },
+                correctAnswer: "A",
+                rationale: "Medullary Thyroid Carcinoma is a neuroendocrine carcinoma arising from the C cells (parafollicular cells) of the thyroid, which secrete calcitonin. The secreted polypeptides often form amyloid deposits in the stroma (~75% of cases), which stain positively with Congo red.",
+                source: "Thyroid Pathology PDF, slide 80: 'Medullary Thyroid Carcinoma • Neuroendocrine carcinoma arising from C cells' AND 'Medullary Thyroid Carcinoma - Pathology ... • Amyloid stroma (~75%) Congo red stain' (Thyroid Pathology PDF, slide 85)"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO5: Describe medullary thyroid carcinoma regarding cell of origin, morphologic features, most common driver mutation, and differences between familial and sporadic types.",
+                question: "A 25-year-old woman is diagnosed with medullary thyroid carcinoma. Because she has a strong family history of the disease across multiple generations, her physician orders genetic testing for a specific germline mutation. The most common driver mutation for this patient's hereditary cancer involves which of the following genes?",
+                options: {
+                    A: "BRAF",
+                    B: "PAX8/PPARG",
+                    C: "PTEN",
+                    D: "RAS",
+                    E: "RET proto-oncogene"
+                },
+                correctAnswer: "E",
+                rationale: "In familial/hereditary Medullary Thyroid Carcinoma (such as in MEN2A and MEN2B syndromes), the tumors are driven almost universally (~98%) by germline mutations in the RET proto-oncogene on chromosome 10.",
+                source: "Thyroid Pathology PDF, slide 80: 'Medullary Thyroid Carcinoma... • Germline mutations almost always involve RET proto-oncogene on chromosome 10'"
+            },
+            {
+                section: "Thyroid Pathology",
+                fullLO: "LO5: Describe medullary thyroid carcinoma regarding cell of origin, morphologic features, most common driver mutation, and differences between familial and sporadic types.",
+                question: "A 32-year-old man is diagnosed with Multiple Endocrine Neoplasia 2B (MEN 2B) and subsequent medullary thyroid carcinoma. Compared to a patient with a sporadic medullary thyroid carcinoma, this patient's tumor presentation is most likely to be characterized by which of the following?",
+                options: {
+                    A: "A later age of onset (6th decade)",
+                    B: "An excellent response to radioactive iodine therapy",
+                    C: "Derivation from thyroid follicular cells",
+                    D: "Multiple, bilateral tumors",
+                    E: "Solitary, unilateral tumor"
+                },
+                correctAnswer: "D",
+                rationale: "Hereditary forms of Medullary Thyroid Carcinoma (such as those associated with MEN2A and MEN2B) characteristically present as multiple, bilateral tumors and arise at a younger age (3rd-4th decade or childhood) compared to the sporadic form, which is usually a solitary tumor arising in the 4th-6th decade.",
+                source: "Thyroid Pathology PDF, slide 86: 'Medullary Thyroid Carcinoma Hereditary vs. Sporadic | Hereditary (MEN2A & 2B): Tumor(s) Often multiple, bilateral | Sporadic: Usually solitary'"
+            }
+        ];
+
+        // --- Core Logic ---
+        const quizRoot = document.getElementById('quiz-root');
+        const themeSelect = document.getElementById('theme-select');
+        const pinBtn = document.getElementById('pin-btn');
+        const mainHeader = document.getElementById('main-header');
+        const sectionNav = document.getElementById('section-nav');
+        const customBuilder = document.getElementById('custom-builder');
+        const rootElements = document.documentElement;
+
+        let isRevealed = false;
+
+        function toggleAllLOs() {
+            isRevealed = !isRevealed;
+            const btn = document.getElementById('reveal-all-btn');
+            btn.textContent = isRevealed ? "Hide Learning Objectives" : "Show Learning Objectives";
+            
+            document.querySelectorAll('.lo-box').forEach(box => {
+                box.style.display = isRevealed ? 'block' : 'none';
+            });
+        }
+
+        function initQuiz() {
+            let currentSection = "";
+            let sectionIndex = 0;
+            
+            quizData.forEach((item, index) => {
+                if (item.section !== currentSection) {
+                    currentSection = item.section;
+                    
+                    const sectionId = 'sec-' + sectionIndex;
+                    
+                    const sectionHeader = document.createElement('h2');
+                    sectionHeader.className = 'section-header';
+                    sectionHeader.id = sectionId;
+                    sectionHeader.textContent = currentSection;
+                    quizRoot.appendChild(sectionHeader);
+
+                    const navBtn = document.createElement('button');
+                    let btnText = currentSection;
+                    // Format navigation button text
+                    if (btnText.includes("Physiology of the Endocrine System")) btnText = "Endocrine Physio";
+                    if (btnText.includes("Pathology of the Pituitary")) btnText = "Pituitary & Hypothalamus Path";
+                    if (btnText.includes("Thyroid Disorders")) btnText = "Thyroid Disorders";
+                    if (btnText.includes("Parathyroid Disorders")) btnText = "Parathyroid Disorders";
+                    if (btnText.includes("Thyroid and Parathyroid Drugs")) btnText = "Thyroid/Parathyroid Drugs";
+                    if (btnText.includes("Thyroid Pathology")) btnText = "Thyroid Path";
+                    
+                    navBtn.textContent = btnText;
+                    navBtn.onclick = () => {
+                        document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+                    };
+                    sectionNav.appendChild(navBtn);
+
+                    sectionIndex++;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+
+                const loBox = document.createElement('div');
+                loBox.className = 'lo-box';
+                loBox.id = `lo-${index}`;
+                loBox.innerHTML = item.fullLO;
+                card.appendChild(loBox);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${index + 1}. ${item.question}`;
+                card.appendChild(qText);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'options-grid';
+
+                for (const[key, value] of Object.entries(item.options)) {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `question-${index}`;
+                    input.value = key;
+
+                    const span = document.createElement('span');
+                    span.innerHTML = `${key}. ${value}`;
+
+                    label.appendChild(input);
+                    label.appendChild(span);
+                    optionsGrid.appendChild(label);
+                }
+                card.appendChild(optionsGrid);
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-check';
+                btn.textContent = 'Check Answer';
+                btn.onclick = () => checkAnswer(index);
+                card.appendChild(btn);
+
+                const feedback = document.createElement('div');
+                feedback.className = 'feedback';
+                feedback.id = `feedback-${index}`;
+                card.appendChild(feedback);
+
+                quizRoot.appendChild(card);
+            });
+
+            const returnContainer = document.createElement('div');
+            returnContainer.style.textAlign = 'center';
+            returnContainer.style.marginTop = '2rem';
+            
+            const returnBtn = document.createElement('a');
+            returnBtn.href = 'https://ibecerramcg.github.io/GI-GU-ENDO-Practice-Quizzes/';
+            returnBtn.className = 'btn-link';
+            returnBtn.textContent = '← Return to Quiz Directory';
+            
+            returnContainer.appendChild(returnBtn);
+            quizRoot.appendChild(returnContainer);
+
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            themeSelect.value = savedTheme;
+            changeTheme(savedTheme);
+
+            const savedPinState = localStorage.getItem('headerPinned');
+            toggleHeader(savedPinState !== 'false');
+        }
+
+        function checkAnswer(index) {
+            const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            const data = quizData[index];
+
+            if (!selected) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const isCorrect = selected.value === data.correctAnswer;
+            
+            let html = `<span class="feedback-header">${isCorrect ? "Correct!" : "Incorrect"}</span>`;
+            if (!isCorrect) {
+                html += `<div>The correct answer is <strong>${data.correctAnswer}</strong>.</div>`;
+            }
+            
+            html += `<div class="rationale"><strong>Rationale:</strong> ${data.rationale}</div>`;
+            html += `<div class="source"><strong>Source:</strong> ${data.source}</div>`;
+
+            feedbackEl.innerHTML = html;
+            feedbackEl.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedbackEl.style.display = 'block';
+        }
+
+        function changeTheme(themeName) {
+            localStorage.setItem('quizTheme', themeName);
+            
+            if (themeName === 'custom') {
+                rootElements.removeAttribute('data-theme');
+                customBuilder.classList.add('active');
+                loadCustomTheme();
+            } else {
+                rootElements.setAttribute('data-theme', themeName);
+                customBuilder.classList.remove('active');
+                rootElements.removeAttribute('style');
+            }
+        }
+
+        function updateCustomTheme() {
+            const bg = document.getElementById('color-bg').value;
+            const card = document.getElementById('color-card').value;
+            const text = document.getElementById('color-text').value;
+            const accent = document.getElementById('color-accent').value;
+
+            rootElements.style.setProperty('--bg-body', bg);
+            rootElements.style.setProperty('--bg-header', bg);
+            rootElements.style.setProperty('--bg-card', card);
+            rootElements.style.setProperty('--highlight-bg', card);
+            rootElements.style.setProperty('--text-main', text);
+            rootElements.style.setProperty('--text-accent', accent);
+            rootElements.style.setProperty('--button-bg', accent);
+            rootElements.style.setProperty('--button-text', bg);
+            rootElements.style.setProperty('--border-color', accent + '40');
+
+            const customColors = { bg, card, text, accent };
+            localStorage.setItem('customThemeColors', JSON.stringify(customColors));
+        }
+
+        function loadCustomTheme() {
+            const savedColors = JSON.parse(localStorage.getItem('customThemeColors'));
+            if (savedColors) {
+                document.getElementById('color-bg').value = savedColors.bg;
+                document.getElementById('color-card').value = savedColors.card;
+                document.getElementById('color-text').value = savedColors.text;
+                document.getElementById('color-accent').value = savedColors.accent;
+                updateCustomTheme();
+            } else {
+                updateCustomTheme();
+            }
+        }
+
+        function toggleHeader(forceState) {
+            const isCurrentlyPinned = !mainHeader.classList.contains('unpinned');
+            const newState = (typeof forceState === 'boolean') ? forceState : !isCurrentlyPinned;
+
+            if (newState) {
+                mainHeader.classList.remove('unpinned');
+                pinBtn.classList.add('pin-active');
+                localStorage.setItem('headerPinned', 'true');
+            } else {
+                mainHeader.classList.add('unpinned');
+                pinBtn.classList.remove('pin-active');
+                localStorage.setItem('headerPinned', 'false');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initQuiz);
+
+    </script>
+</body>
+</html>
